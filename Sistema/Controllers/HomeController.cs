@@ -15,8 +15,15 @@ namespace Sistema.Controllers
             return View();
         }
 
-        public IActionResult Privacy()
+        public IActionResult About()
         {
+            ViewData["Message"] = "Sistema Académico";
+            return View();
+        }
+
+        public IActionResult Contact()
+        {
+            ViewData["Message"] = "Detalles de contacto";
             return View();
         }
 
