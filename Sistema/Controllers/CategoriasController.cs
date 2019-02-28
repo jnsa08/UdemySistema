@@ -19,11 +19,21 @@ namespace Sistema.Controllers
         }
 
         // GET: Categorias
-        public async Task<IActionResult> Index(string sortOrder, string searchString)
+        public async Task<IActionResult> Index(string sortOrder,string currentFilter, string searchString, int? page)
         {
 			ViewData["NombreSortParam"] = String.IsNullOrEmpty(sortOrder) ? "nombre_desc" : "";
 			ViewData["DescripcionSortParam"] = (sortOrder == "descripcion_asc") ? "descripcion_desc" : "descripcion_asc";
+
+			if(searchString != null)
+			{
+				page = 1;
+			}
+			else
+			{
+				searchString = currentFilter;
+			}
 			ViewData["CurrentFilter"] = searchString;
+			ViewData["CurrentSort"] = sortOrder;
 			var categorias = from s in _context.Categoria select s;
 
 			if (!String.IsNullOrEmpty(searchString))
@@ -47,7 +57,9 @@ namespace Sistema.Controllers
 					break;
 
 			}
-			return View(await categorias.AsNoTracking().ToListAsync());
+			int pageSize = 3;
+			return View(await Paginacion<Categoria>.CreateAsync(categorias.AsNoTracking(), page ?? 1, pageSize));
+			//return View(await categorias.AsNoTracking().ToListAsync());
 			//return View(await _context.Categoria.ToListAsync());
         }
 
