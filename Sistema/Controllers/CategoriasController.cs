@@ -19,12 +19,17 @@ namespace Sistema.Controllers
         }
 
         // GET: Categorias
-        public async Task<IActionResult> Index(string sortOrder)
+        public async Task<IActionResult> Index(string sortOrder, string searchString)
         {
 			ViewData["NombreSortParam"] = String.IsNullOrEmpty(sortOrder) ? "nombre_desc" : "";
 			ViewData["DescripcionSortParam"] = (sortOrder == "descripcion_asc") ? "descripcion_desc" : "descripcion_asc";
-
+			ViewData["CurrentFilter"] = searchString;
 			var categorias = from s in _context.Categoria select s;
+
+			if (!String.IsNullOrEmpty(searchString))
+			{
+				categorias = categorias.Where(s => s.Nombre.Contains(searchString) || s.Descripcion.Contains(searchString));
+			}
 
 			switch (sortOrder)
 			{
